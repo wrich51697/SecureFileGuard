@@ -1,0 +1,11 @@
+# Content for the requirements.txt file listing all the necessary dependencies for SecureFileGuard
+
+pyclamd>=0.4.0
+pycryptodomex>=3.21.0
+scapy>=2.5.0
+requests>=2.31.0
+Flask>=2.3.0
+FastAPI>=0.100.0
+python-dotenv>=1.0.0
+tensorflow~=2.18.0
+

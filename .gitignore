@@ -1,0 +1,22 @@
+# Ignore environment variables
+.env
+
+# Ignore Python virtual environments
+.venv/
+venv/
+
+# Ignore log files
+logs/
+*.log
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore IDE specific files
+.idea/
+
+# Ignore upload and resources directories
+uploads/
+resources/
+
