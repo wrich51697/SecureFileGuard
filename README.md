@@ -103,4 +103,4 @@ Other Software: ClamAV (with `clamd` daemon)
 - VirusTotal Integration Suggested By: Volodymyr Krushynskyi
 
 ## License
-This project is licensed under [LICENSE NAME]. (Placeholder - specify license type in final version)
+This project is licensed under MIT.
