@@ -4,12 +4,12 @@
 # Class: CYBR-260-45
 # Assignment: Final Project
 # Description: Main script for SecureFileGuard. Integrates file upload, malware scanning, encryption, and notifications.
-# Revised on: 2024-11-17
+# Revised on: 2024-11-21
 
 import logging
 import os
 from src.file_upload import upload_file
-from src.malware_scan import scan_file
+from src.malware_scan import scan_file, quarantine_file
 from src.encryption import encrypt_file
 from src.notification import send_email_notification
 
@@ -50,10 +50,17 @@ def main():
 
         if scan_results['status'] == 'infected':
             print(f"File is infected: {scan_results['threat']}")
+            logging.warning(f"Quarantining infected file: {upload_results['file']}")
+            quarantine_file(upload_results['file'])
+
             subject = "Malware Alert: Infected File Detected"
-            message = f"An infected file was detected: {upload_results['file']}\nThreat: {scan_results['threat']}"
+            message = f"An infected file was detected and quarantined: {upload_results['file']}\nThreat: {scan_results['threat']}"
             notification_result = send_email_notification(subject, message, os.getenv("RECIPIENT_EMAIL"))
             print(f"Notification sent: {notification_result}")
+            return
+
+        if scan_results['status'] == 'error':
+            print(f"Scan error: {scan_results['threat']}")
             return
 
         print("File is clean, proceeding to encryption...")

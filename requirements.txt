@@ -1,11 +1,11 @@
-# Content for the requirements.txt file listing all the necessary dependencies for SecureFileGuard
+# SecureFileGuard Requirements
+pyclamd>=0.4.0              # For ClamAV integration and malware scanning
+pycryptodomex>=3.21.0       # For encryption and secure file handling
+scapy>=2.5.0                # For network packet inspection and analysis
+requests>=2.31.0            # For making HTTP requests (e.g., VirusTotal API integration)
+Flask>=2.3.0                # (Optional) For building web-based interfaces
+FastAPI>=0.100.0            # (Optional) For building RESTful APIs
+python-dotenv>=1.0.0        # For managing environment variables securely
+tensorflow~=2.18.0          # For AI-enhanced threat detection and advanced features
 
-pyclamd>=0.4.0
-pycryptodomex>=3.21.0
-scapy>=2.5.0
-requests>=2.31.0
-Flask>=2.3.0
-FastAPI>=0.100.0
-python-dotenv>=1.0.0
-tensorflow~=2.18.0
 
