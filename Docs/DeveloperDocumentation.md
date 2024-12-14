@@ -13,100 +13,177 @@
 9. API Gateway Integration
 10. Network Functionality Enhancements
 
-________________________________________________________________________________________________________________________
+---
 
 ## 1. Introduction
-- ### Project Overview:
 
-  SecureFileGuard is a security-focused application designed to securely handle file uploads and scans for malware using a hybrid approach with ClamAV and VirusTotal. It automates the scanning, logging, and notification of potentially harmful files. This document is intended to guide developers through understanding, configuring, and extending the codebase.
-    - ### Target Audience:
+### Project Overview:
+SecureFileGuard is a robust, security-focused application designed to handle file uploads securely and scan for malware. It leverages a hybrid malware scanning approach combining local scanning with ClamAV and cloud-based intelligence with VirusTotal. The system automates workflows for scanning, logging, and alerting while emphasizing data security and privacy.
 
-      Developers working on maintenance, enhancement, or troubleshooting of SecureFileGuard.
+### Target Audience:
+Developers involved in maintaining, enhancing, or troubleshooting SecureFileGuard.
 
-- ### Acknowledgment:
+### Acknowledgment:
+Integration of VirusTotal for enhanced malware detection is based on a suggestion by Volodymyr, ensuring a balance between enhanced threat detection and privacy considerations.
 
-  The idea to integrate VirusTotal for enhanced malware detection was suggested by a classmate, **Volodymyr**. This hybrid approach has been adopted to balance enhanced threat intelligence with data privacy considerations.
-________________________________________________________________________________________________________________________
+---
 
 ## 2. System Architecture
 
-- ### Overview of Components:
+### Overview of Components:
+- **SecureFileGuard** integrates several libraries, including:
+    - **ClamAV:** Local malware scanning.
+    - **VirusTotal API:** Cloud-based threat analysis.
+    - **PyCryptodome:** AES encryption for file storage and transfer.
+    - **FastAPI:** API Gateway for managing secure API calls.
+    - **psutil:** Automated detection and management of the ClamAV daemon (`clamd`).
+    - **Scapy:** Real-time network analysis for port scanning.
+    - **smtplib:** Email notifications for malicious file detections.
 
-    - SecureFileGuard integrates several libraries, including:
+### Workflow Summary:
+1. Files are uploaded and validated.
+2. Files are scanned locally with ClamAV for malware.
+3. Inconclusive or suspicious results are sent to VirusTotal for further analysis.
+4. Files are encrypted and securely stored in SQLite.
+5. Malicious files are quarantined, and administrators are notified via email.
+6. Network activity is monitored and logged.
 
-        - ClamAV for local malware scanning.
-        - VirusTotal API for additional cloud-based malware analysis.
-        - Scapy for packet analysis and port scanning.
-        - PyCryptodome for encryption/decryption.
-        - API Gateway (Flask/FastAPI) for managing API requests and handling secure communication.
-
-    - ### Workflow Summary:
-
-        1. Files are uploaded to the system.
-        2. ClamAV scans the files locally for malware signatures.
-        3. If further analysis is needed, the file hash is sent to VirusTotal via the API Gateway.
-        4. Scanned files are logged and stored securely.
-        5. Optional notifications alert the admin to malicious files.
-        6. Network logging captures all external API calls and suspicious network activity.
-________________________________________________________________________________________________________________________
+---
 
 ## 3. Code Structure and Organization
 
-- Directory Structure
-   ```text
-    SecureFileGuard/
-    ├── app/              # Core application files
-    ├── tests/            # Unit tests and testing scripts
-    ├── Docs/             # Documentation folder
-    │   ├── ProjectOverview.md
-    │   └── DeveloperDocumentation.md
-    ├── config/           # Configuration files
-    ├── lib/              # External libraries or scripts
-    ├── logs/             # Log files
-    └── gateway/          # API Gateway components
-    ```
+### Directory Structure
+```text
+SecureFileGuard/
+├── frontend/              # Frontend files for the web interface
+│   ├── index.html         # Main HTML file
+│   ├── scripts/           # JavaScript files
+│   │   └── main.js
+│   └── styles.css         # CSS file for styling
+├── src/                   # Core application source files
+│   ├── gateway/           # API Gateway modules
+│   │   ├── app.py
+│   │   └── endpoints/
+│   │       ├── notify.py
+│   │       └── upload_endpoint.py
+│   ├── encryption.py      # Encryption handling
+│   ├── file_upload.py     # File upload and validation
+│   ├── logger_config.py   # Logger configuration
+│   ├── malware_scan.py    # Malware scanning logic
+│   ├── notification.py    # Notification handling
+│   ├── db.py              # Database operations
+├── tests/                 # Unit and integration tests
+│   ├── test_clamav_connection.py
+│   ├── test_file_upload.py
+│   ├── test_encryption.py
+│   ├── test_malware_scan.py
+│   └── test_notification.py
+├── logs/                  # Logging directory
+├── sandbox/               # Temporary storage for uploaded files
+├── file_metadata.db       # SQLite database for metadata
+├── requirements.txt       # List of dependencies
+├── README.md              # Project overview and usage instructions
+├── LICENSE                # License information
+└── .env                   # Environment variables
+```
 
-    - ## Key Files and Directories:
-        - `app/`: Contains primary modules for file handling, scanning, encryption.
-        - `gateway/`: Manages API requests for VirusTotal integration.
-        - `tests/`: Contains test scripts for each major function.
-        - `config/`: Configuration files, including ClamAV and environment settings.
-        - `Docs/`: Project and developer documentation.
-________________________________________________________________________________________________________________________
+### Key Files and Directories:
+- **`src/`:** Contains core application modules for scanning, file handling, and notifications.
+- **`frontend/`:** HTML, CSS, and JavaScript files for the web-based interface.
+- **`tests/`:** Unit tests for core functionalities like file upload, scanning, and encryption.
+
+---
+
+## 4. Installation Guide
+Refer to the [Installation Guide](Docs/InstallationGuide.md) for step-by-step setup instructions, including:
+1. Installing Python and project dependencies.
+2. Configuring ClamAV and VirusTotal.
+3. Running the frontend and backend servers.
+
+---
+
+## 5. Configuration
+
+### Environment Variables:
+Set up a `.env` file in the project root with the following variables:
+```bash
+VIRUSTOTAL_API_KEY=your_api_key_here
+SMTP_SERVER=smtp.example.com
+SMTP_PORT=587
+SENDER_EMAIL=admin@example.com
+SENDER_PASSWORD=your_password_here
+ENCRYPTION_KEY=your_secure_key_here
+```
+
+### ClamAV Configuration:
+1. Install ClamAV and update virus definitions using `freshclam`.
+2. Start the ClamAV daemon (`clamd`) before running the application.
+
+---
+
+## 6. Testing and Debugging
+
+### Unit Testing:
+Run unit tests using:
+```bash
+python -m unittest discover tests
+```
+Tests cover:
+- File upload functionality.
+- Malware scanning with ClamAV and VirusTotal.
+- Encryption and notification systems.
+
+### Debugging Steps:
+1. Check logs in the `logs/` directory for detailed error messages.
+2. Test ClamAV with:
+   ```bash
+   clamdscan <file_path>
+   ```
+3. Verify VirusTotal API connectivity:
+   ```bash
+   python tests/test_virustotal_integration.py
+   ```
+
+---
+
+## 7. Maintenance and Troubleshooting
+
+### Regular Maintenance:
+1. Update ClamAV virus definitions with `freshclam`.
+2. Archive old logs to prevent excessive disk usage.
+3. Rotate API keys periodically for security.
+
+### Common Issues:
+- **ClamAV not running:** Check `clamd` status or configuration.
+- **API errors:** Ensure the VirusTotal API key is valid and within rate limits.
+- **Database errors:** Verify permissions and integrity of `file_metadata.db`.
+
+---
 
 ## 8. Hybrid Malware Scanning Approach
 
-- **Local Scanning with ClamAV**:
-    - ClamAV is used as the primary scanner for local file analysis, ensuring data privacy by processing files within the system.
-- **VirusTotal API Integration**:
-    - If ClamAV results are inconclusive, the file hash (e.g., SHA-256) is sent to VirusTotal through the API Gateway for additional verification.
-- **Privacy Measures**:
-    - Only file hashes are sent to VirusTotal, not the full file contents, reducing the risk of exposing sensitive user data.
+- **Local Scanning with ClamAV:** Quick scans with low privacy risks.
+- **Cloud-based Analysis with VirusTotal:** Comprehensive threat detection.
 
-________________________________________________________________________________________________________________________
+---
 
 ## 9. API Gateway Integration
 
-- The API Gateway (implemented using Flask or FastAPI) serves as a centralized entry point for all external API calls, handling:
-    - **Rate Limiting**: Controls the frequency of requests to prevent exceeding API limits.
-    - **Data Privacy**: Hashes the file data before sending to external services, ensuring no sensitive information is exposed.
-    - **Secure Communication**: Uses HTTPS for encrypted data transmission.
+- **Role:** Centralized handling of VirusTotal API requests.
+- **Features:**
+    - Rate-limiting to prevent API overuse.
+    - Secure, anonymized communication using HTTPS.
 
-________________________________________________________________________________________________________________________
+---
 
 ## 10. Network Functionality Enhancements
 
-- **Email Notifications**:
-    - Uses `smtplib` to send real-time alerts to administrators when malware is detected.
-- **Port Scanning with Scapy**:
-    - Implements basic port scanning using `Scapy` to detect suspicious network behavior.
-- **Network Logging**:
-    - Captures details of all API calls and network activities using Python’s `socket` and `logging` libraries.
-- **VirusTotal API Integration**:
-    - Uses the `requests` library to query the VirusTotal API for additional threat intelligence.
+### Automated ClamAV Management:
+Uses `psutil` to check and start `clamd` automatically.
 
-________________________________________________________________________________________________________________________
+### Enhanced Logging:
+Captures detailed records for API and network activities.
 
-Document Last Updated: November 17, 2024
+---
 
-
+Document Last Updated: December 13, 2024

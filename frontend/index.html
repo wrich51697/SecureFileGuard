@@ -1,0 +1,61 @@
+<!-- index.html -->
+<!-- Author: William Richmond -->
+<!-- Date: 2024-12-01 -->
+<!-- Class: CYBR-260-45 -->
+<!-- Assignment: Final Project -->
+<!-- Description: Main HTML layout for the SecureFileGuard web interface -->
+<!-- Revised on: 2024-12-08 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFileGuard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <h1>SecureFileGuard</h1>
+</header>
+
+<!-- Main Content Section -->
+<main>
+    <!-- File Upload Section -->
+    <div class="section" id="file-upload-section">
+        <h2>Upload File</h2>
+        <div id="upload-area">
+            Drag and drop a file here or click to upload
+        </div>
+        <input type="file" id="file-input" style="display: none;">
+        <button id="upload-button">Upload</button>
+    </div>
+
+    <!-- Scan Results Section -->
+    <div class="section" id="scan-results-section">
+        <h2>Scan Results</h2>
+        <div id="results-container">
+            <p>No scans yet.</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <div class="section" id="admin-panel-section">
+        <h2>Admin Panel</h2>
+        <button id="view-logs-button">View Logs</button>
+        <div id="logs" style="display: none;">
+            <p>No logs available.</p>
+        </div>
+    </div>
+</main>
+
+<!-- Footer Section -->
+<footer>
+    &copy; 2024 SecureFileGuard | All Rights Reserved
+</footer>
+
+<!-- External JavaScript -->
+<script src="scripts/main.js" defer></script>
+</body>
+</html>

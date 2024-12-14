@@ -34,20 +34,50 @@ SecureFileGuard/
 │   ├── InstallationGuide.md
 │   ├── ProjectOverview.md
 │   └── UserGuide.md
-├── lib/                   # External libraries or helper scripts
-├── logs/                  # Log files directory
+├── frontend/              # Frontend files for user interface
+│   ├── index.html         # Main HTML file
+│   ├── scripts/           # JavaScript files
+│   │   └── main.js
+│   └── styles.css         # CSS file for styling
+├── lib/                   # Placeholder for external libraries
+│   └── __init__.py
+├── logs/                  # Centralized directory for logs
+├── resources/             # Sample resources for testing
+│   ├── sample.txt
+│   └── test_file.txt
+├── sandbox/               # Temporary storage for uploaded files
 ├── src/                   # Core application source files
-│   ├── encryption.py
-│   ├── file_upload.py
-│   ├── logger.py
-│   ├── malware_scan.py
-│   └── notification.py
-├── tests/                 # Unit tests and testing scripts
-│   └── library_test.py
+│   ├── core/              # Core modules
+│   │   ├── __init__.py
+│   │   └── processing.py
+│   ├── gateway/           # API Gateway modules
+│   │   ├── app.py
+│   │   └── endpoints/
+│   │       ├── notify.py
+│   │       └── upload_endpoint.py
+│   ├── encryption.py      # Encryption handling
+│   ├── file_upload.py     # File upload and validation
+│   ├── logger_config.py   # Logger configuration
+│   ├── malware_scan.py    # Malware scanning logic
+│   ├── notification.py    # Notification handling
+│   ├── db.py              # Database operations
+├── tests/                 # Unit tests
+│   ├── sandbox/           # Test sandbox files
+│   │   └── ...
+│   ├── test_clamav_connection.py
+│   ├── test_db.py
+│   ├── test_encryption.py
+│   ├── test_env.py
+│   ├── test_file_upload.py
+│   ├── test_malware_scan.py
+│   └── test_notification.py
 ├── main.py                # Main entry point for the application
 ├── requirements.txt       # List of dependencies
 ├── README.md              # Project overview and usage instructions
-└── LICENSE                # License information
+├── LICENSE                # License information
+├── .env                   # Environment variables
+└── file_metadata.db       # SQLite database for file metadata
+
 ```
 
 ## Requirements
@@ -66,14 +96,23 @@ Other Software: ClamAV (with `clamd` daemon)
 
 ## Usage
 
+Add details for frontend usage since the project includes both a CLI and a web-based interface.
+
 1. Start the ClamAV daemon (`clamd`).
 
-2. Run the API Gateway:
-    ```bash
-    python gateway/app.py
-    ```
+2. Running the Frontend:
+   ```Bash
+   cd frontend
+   python -m http.server 8080
+   ```
+   - Access the frontend via your browser at http://127.0.0.1:8080.
+
+3. Running the Backend:
+   ```Bash
+   uvicorn src.gateway.app:app --host 127.0.0.1 --port 8000 --reload
+   ```
    
-3. Launch SecureFileGuard:
+4. Launch SecureFileGuard CLI:
     ```bash
     python main.py
     ```
@@ -81,12 +120,22 @@ Other Software: ClamAV (with `clamd` daemon)
 4. Upload a file to scan and view the results.
 
 ## Logging
-
 **Log files are stored in the `logs/` directory:**
+- `upload_endpoint.log`: Logs related to file uploads via the API.
+- `file_upload.log`: Logs for file validation and storage processes.
+- `db.log`: Logs related to database interactions.
+- `encryption.log`: Logs for file encryption activities.
+- `malware_scan.log`: Logs for malware scanning events.
 
-- `app_log.txt`: Logs related to the main application processes.
-- `gateway_log.txt`: Logs for the API Gateway and VirusTotal integration.
-- `scan_log.txt`: Detailed logs of malware scans and results.
+## Environment Variables
+The `.env` file should contain the following variables:
+- `VT_API_KEY`: Your VirusTotal API key for cloud-based threat scanning.
+- `SMTP_SERVER`: The SMTP server for sending notifications.
+- `SMTP_PORT`: The SMTP port (e.g., 587 for TLS).
+- `SENDER_EMAIL`: The email address used to send notifications.
+- `SENDER_PASSWORD`: The password for the sender email account.
+- `ENCRYPTION_KEY`: A secure passphrase for file encryption.
+
 
 ## Resources
 
@@ -95,7 +144,6 @@ Other Software: ClamAV (with `clamd` daemon)
 
 ## Future Enhancements
 - Implement machine learning capabilities using TensorFlow for advanced threat detection.
-- Add a graphical user interface (GUI) for improved user experience.
 - Enable remote scanning and cloud storage integration for scalability.
 
 ## Credits
@@ -104,3 +152,6 @@ Other Software: ClamAV (with `clamd` daemon)
 
 ## License
 This project is licensed under MIT.
+
+___
+Last Updated: December 8, 2024 

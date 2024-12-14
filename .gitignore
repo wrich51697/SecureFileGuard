@@ -20,3 +20,7 @@ __pycache__/
 uploads/
 resources/
 
+# Exclude database files
+file_metadata.db
+secure_storage.db
+

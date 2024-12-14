@@ -3,86 +3,23 @@
 # Date: 2024-11-17
 # Class: CYBR-260-45
 # Assignment: Final Project
-# Description: Main script for SecureFileGuard. Integrates file upload, malware scanning, encryption, and notifications.
-# Revised on: 2024-11-21
+# Description: CLI for SecureFileGuard. Uses centralized logic from processing.py.
+# Revised on: 2024-12-08
 
-import logging
-import os
-from src.file_upload import upload_file
-from src.malware_scan import scan_file, quarantine_file
-from src.encryption import encrypt_file
-from src.notification import send_email_notification
+from src.core.processing import process_file, print_colored
+from src.db import DatabaseManager
 
-# Ensure the logs directory exists
-log_directory = 'logs'
-if not os.path.exists(log_directory):
-    os.makedirs(log_directory)
-
-# Configure logging
-logging.basicConfig(
-    filename=os.path.join(log_directory, 'main.log'),
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# Function: main
-# Purpose: Main function that coordinates the file upload, malware scan, encryption, and notifications.
-# Inputs: None (user input for file path)
-# Returns: None
 def main():
     try:
-        # Step 1: File Upload
-        print("Starting file upload...")
-        file_path = input("Enter the path of the file to upload: ")
-        upload_results = upload_file(file_path)
-        logging.info(f"Upload Results: {upload_results}")
+        metadata_manager = DatabaseManager("file_metadata.db")
+        secure_storage_manager = DatabaseManager("secure_storage.db")
+        metadata_manager.initialize()
+        secure_storage_manager.initialize(is_secure_storage=True)
 
-        if upload_results['status'] != 'success':
-            print(f"Upload failed: {upload_results['message']}")
-            return
-
-        print(f"File uploaded successfully: {upload_results['file']}")
-
-        # Step 2: Malware Scan
-        print("Scanning file for malware...")
-        scan_results = scan_file(upload_results['file'])
-        logging.info(f"Scan Results: {scan_results}")
-
-        if scan_results['status'] == 'infected':
-            print(f"File is infected: {scan_results['threat']}")
-            logging.warning(f"Quarantining infected file: {upload_results['file']}")
-            quarantine_file(upload_results['file'])
-
-            subject = "Malware Alert: Infected File Detected"
-            message = f"An infected file was detected and quarantined: {upload_results['file']}\nThreat: {scan_results['threat']}"
-            notification_result = send_email_notification(subject, message, os.getenv("RECIPIENT_EMAIL"))
-            print(f"Notification sent: {notification_result}")
-            return
-
-        if scan_results['status'] == 'error':
-            print(f"Scan error: {scan_results['threat']}")
-            return
-
-        print("File is clean, proceeding to encryption...")
-
-        # Step 3: Encrypt the File
-        with open(upload_results['file'], 'rb') as file:
-            file_data = file.read()
-
-        encryption_key = b'Sixteen byte key'  # AES key must be 16, 24, or 32 bytes
-        encrypted_data = encrypt_file(file_data, encryption_key)
-
-        encrypted_file_path = upload_results['file'] + ".enc"
-        with open(encrypted_file_path, 'wb') as enc_file:
-            enc_file.write(encrypted_data)
-
-        logging.info(f"File encrypted and saved as: {encrypted_file_path}")
-        print(f"File successfully encrypted: {encrypted_file_path}")
-
+        file_path = input("Enter the path of the file to upload: ").strip()
+        result = process_file(metadata_manager, secure_storage_manager, file_path)
     except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        print(f"An unexpected error occurred: {e}")
+        print_colored(f"An error occurred: {e}", "error")
 
-# Example usage (for running the script directly)
 if __name__ == "__main__":
     main()

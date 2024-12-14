@@ -1,104 +1,93 @@
 # SecureFileGuard User Guide
 
 1. ## Introduction
-   SecureFileGuard is a powerful application designed to ensure safe file handling by offering secure file uploads, 
-   malware scanning, and network analysis capabilities. By integrating a hybrid malware scanning approach with ClamAV 
-   and VirusTotal, it provides robust threat detection, making it ideal for users seeking a comprehensive and reliable 
-   file management solution.
+   SecureFileGuard is a robust file security solution designed to streamline secure file uploads, hybrid malware scanning, and network monitoring. It combines local scanning (ClamAV) and cloud-based scanning (VirusTotal) to deliver a powerful defense against malware threats.
 
    ## Key Features
-
-   - **Secure File Upload:** Upload files with confidence, knowing they will be securely processed.
-   - **Hybrid Malware Scanning:** Scans files upon upload using both ClamAV (local) and VirusTotal (cloud-based) for 
-     enhanced threat detection.
-   - **Network Analysis:** Uses Scapy for port scanning and real-time network monitoring to detect suspicious activity.
-   - **Notifications:** Automated email alerts notify users and administrators if a malware threat is detected.
+   - **Secure File Upload**: Safeguard your data with secure file handling protocols.
+   - **Hybrid Malware Scanning**: Combines ClamAV's local scanning with VirusTotal's advanced cloud-based API for 
+     enhanced accuracy.
+   - **Notifications**: Automated email alerts notify users of detected threats.
+   - **Detailed Logs**: Easily track application activity with user-friendly audit logs.
+   - **Extensibility**: A modular design that allows for future enhancements.
+___
 
 2. ## Getting Started
 
    ### Prerequisites
 
-   - Operating System: Compatible with Windows 10 and later, or Linux.
-   - Software: Ensure Python 3.8+ and ClamAV are installed.
-   - Dependencies: Python libraries including `pyclamd`, `scapy`, `tensorflow`, `pycryptodome`, `requests`, and `Flask` or 
-     `FastAPI`. (For detailed installation steps, refer to the Installation Guide.)
-
-   ### Installation Instructions
-
-   Follow the steps in the Installation Guide to set up SecureFileGuard and ensure all dependencies are correctly installed.
-
-   ### Launching SecureFileGuard
-
-   - Start the ClamAV daemon (`clamd`) if it is not already running.
-   - Start the API Gateway for handling VirusTotal API requests:
-   ```bash
-   python gateway/app.py
-   ```
+      - Operating System: Windows 10+ or a compatible Linux distribution.
+      - Software:
+         - Python 3.8+
+         - ClamAV (ensure `clamd` service is installed and running).
+      - Environment Setup: Ensure the `.env` file contains your VirusTotal API key, email SMTP configuration, and other 
+           environment variables.
    
-   - Run SecureFileGuard from your terminal:
-   ```Bash
-    python main.py
-   ```
-   
-   - The application will initialize, and you will be ready to begin uploading and scanning files.
+      ## Installation
+      Refer to the Installation Guide for step-by-step instructions on setting up SecureFileGuard and its dependencies.
 
-3. ## Using SecureFileGuard
+   ## Launching SecureFileGuard
+
+   1. Start ClamAV's `clamd` service (if not running):
+      ```Bash
+      clamd &
+      ```
+   2. Launch the backend API Gateway:
+      ```Bash
+      uvicorn src.gateway.app:app --host 127.0.0.1 --port 8000 --reload
+      ```
+   3. Start the frontend:
+      ```Bash
+      python -m http.server 8080
+      ```
+   4. (Optional) Use the CLI:
+      ```Bash 
+      python main.py
+      ```
+___
+
+3. ## Features and Usage
 
    ### Uploading Files
 
-   - Launch the application as outlined in the Getting Started section.
-   - Use the Upload File option to browse and select the file you want to upload.
-   - Confirm your selection to proceed with the upload.
+      1. Drag and drop files into the designated area in the web interface or click "Upload."
    
-   ### Scanning Files for Malware
-
-   - Once a file is uploaded, SecureFileGuard will automatically initiate a hybrid malware scan.
-      - Step 1: The file is first scanned locally using ClamAV.
-      - Step 2: If additional verification is needed, the file hash is sent to VirusTotal for a secondary scan via 
-        the API Gateway.
-   - The scan may take a few moments depending on file size and network conditions.
-   - If any threats are detected, a notification will appear with detailed information about the infected file.
+      2. Alternatively, use the CLI to upload and scan files manually.
    
-   ### Viewing Scan Results
+   ## Malware Scanning
 
-   - After a scan is completed, you’ll see one of the following results:
-      - **Clean:** The file is safe and free from malware.
-      - **Infected:** The file contains threats. Details will be displayed, including threat type and recommended 
-        action.
-   - For additional details, you can view a full report in the Scan Results section.
-   
-   ### Managing Files
+   - Hybrid scanning automatically detects threats using:
+      - ClamAV for local signature matching.
+      - VirusTotal for advanced detection using cloud APIs.
+     
+   ## Notifications
+   - If a threat is detected, SecureFileGuard sends an email alert to the configured admin address. 
+___
+   4. ## Troubleshooting
 
-   - **Download:** Once a file is scanned, it can be securely downloaded if desired.
-   - **Delete:** You may delete any scanned file that you no longer need to keep on the server.
-   
-4. ## Troubleshooting
+      ### Common Issues and Solutions
 
-   ### Common Issues and Solutions
-   Issue: "Could not connect to clamd server"
+      Issue: "Could not connect to clamd server"
 
-   - Solution: Verify that the ClamAV daemon (`clamd`) is running. You may need to restart it and try again.
-   
-   Issue: "VirusTotal API error"
+      - Solution: Ensure clamd is running and accessible. Restart with:
+      ```bash 
+      clamd restart
+      ```
+      Issue: "VirusTotal API error"
 
-   - Solution: Ensure your API key is correctly configured in the `.env` file. Check for API rate limits if you 
-   encounter errors.
-   
-   Issue: "File upload error"
+      - Solution: Verify your API key in the .env file. Ensure you haven’t exceeded the daily request limit.
+      
+      Issue: "File upload error"
 
-   - Solution: Ensure the file meets any size or format restrictions as per system requirements. Retry the upload and 
-   confirm you have sufficient permissions.
-   
-   Issue: "Scan results not displaying"
+      - Solution: Ensure the file is under the size limit (10MB) and in a supported format (.txt, .pdf, .docx).
+___
 
-   - Solution: Check that ClamAV is fully updated. Running `freshclam` can ensure you have the latest virus definitions.
-   
-5. ## Contact and Support
+5. ## Additional Resources
 
-   This contact information is currently a placeholder and will be updated in the final release.
+### Placeholders
 
-   - Email: support@securefileguard.com
-   - Website: www.securefileguard.com/support
-________________________________________________________________________________________________________________________
-Document Last Updated: November 17, 2024
+   - Visit our website for more tutorials: www.securefileguard.com
+   - Contact us: support@securefileguard.com
+___
+   Last Updated: December 8, 2024 
 

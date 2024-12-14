@@ -1,4 +1,5 @@
 # SecureFileGuard Requirements
+# Python Libraries
 pyclamd>=0.4.0              # For ClamAV integration and malware scanning
 pycryptodomex>=3.21.0       # For encryption and secure file handling
 scapy>=2.5.0                # For network packet inspection and analysis
@@ -7,5 +8,16 @@ Flask>=2.3.0                # (Optional) For building web-based interfaces
 FastAPI>=0.100.0            # (Optional) For building RESTful APIs
 python-dotenv>=1.0.0        # For managing environment variables securely
 tensorflow~=2.18.0          # For AI-enhanced threat detection and advanced features
+psutil>=5.9.0               # For process management and checking if ClamAV is running
+uvicorn~=0.32.1             # For running ASGI applications, including FastAPI
+colorama~=0.4.6             # For adding colored terminal output
 
+# Built-in Python Libraries (Included with Python)
+# smtplib                   # For sending email notifications
+# email                     # For constructing email messages
+# unittest                  # For running tests
+# sqlite3                   # For database operations
+# ctypes                    # For low-level system calls
+# subprocess                # For running external commands
+# logging                   # For logging and error tracking
 
